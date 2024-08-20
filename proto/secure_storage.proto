@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package secure_storage;
+
+option go_package = "secure_storage/proto";
+// exec: protoc --go_out=. --go_opt=paths=source_relative   --go-grpc_out=. --go-grpc_opt=paths=source_relative   proto/secure_storage.proto
+
+
+// Check service health
+message CheckServiceRequest {}
+message CheckServiceResponse{
+  bool up = 1;
+}
+
+
+// Register User
+message User {
+  string name = 3;
+  string second_name = 4;
+}
+message RegisterUserRequest {
+  string login = 1;
+  string password = 2;
+  User user = 3;
+}
+message RegisterUserResponse {
+  bool is_auth = 1;
+  string token = 2;
+}
+
+
+// Auth User
+message AuthUserRequest {
+  string login = 1;
+  string password = 2;
+}
+message AuthUserResponse {
+  bool is_auth = 1;
+  string token = 2;
+}
+
+
+// Services
+service SecureStorage {
+  rpc CheckService(CheckServiceRequest) returns (CheckServiceResponse);
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
+  rpc AuthUser(AuthUserRequest) returns (AuthUserResponse);
+}
