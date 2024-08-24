@@ -57,10 +57,7 @@ func (d *Storage) Destroy() error {
 
 func (d *Storage) Ping(ctx context.Context) bool {
 	err := d.Pool.Ping(ctx)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (d *Storage) prepare() error {
@@ -96,6 +93,8 @@ const (
 							ON uk.user_id = u.id
 							WHERE u.user_login = $1
 							AND uk.is_active = true`
+	saveUserDataSql = `INSERT INTO user_data (user_id, data_type, user_data) VALUES ($1, $2, $3)`
+	getUserDataSql  = `SELECT user_data::bytea FROM user_data WHERE user_id = $1 and data_type = $2`
 )
 
 // SaveUser - сохраняем пользователя. Возвращаем:
@@ -156,4 +155,29 @@ func (d *Storage) GetUserKeyByLogin(ctx context.Context, login string) ([]byte, 
 		return nil, err
 	}
 	return key, nil
+}
+
+func (d *Storage) SaveUserData(ctx context.Context, userID int, dataType string, data []byte) error {
+	_, err := d.Pool.Exec(ctx, saveUserDataSql, userID, dataType, data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (d *Storage) GetUserData(ctx context.Context, userID int, dataType string) ([][]byte, error) {
+	var dataList [][]byte
+	query, err := d.Pool.Query(ctx, getUserDataSql, userID, dataType)
+	if err != nil {
+		return nil, err
+	}
+	for query.Next() {
+		var data []byte
+		err = query.Scan(&data)
+		if err != nil {
+			return nil, err
+		}
+		dataList = append(dataList, data)
+	}
+	return dataList, nil
 }

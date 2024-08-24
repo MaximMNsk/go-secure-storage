@@ -24,7 +24,7 @@ func GetHash(text string, length int) (string, error) {
 	return w[:length], nil
 }
 
-func Encrypt(key []byte, plaintext []byte) ([]byte, error) {
+func Encrypt(key []byte, text []byte) ([]byte, error) {
 	k := sha256.Sum256(key)
 	block, err := aes.NewCipher(k[:])
 	if err != nil {
@@ -42,10 +42,10 @@ func Encrypt(key []byte, plaintext []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	return gcm.Seal(nonce, nonce, plaintext, nil), nil
+	return gcm.Seal(nonce, nonce, text, nil), nil
 }
 
-func Decrypt(key []byte, ciphertext []byte) ([]byte, error) {
+func Decrypt(key []byte, text []byte) ([]byte, error) {
 	k := sha256.Sum256(key)
 	block, err := aes.NewCipher(k[:])
 	if err != nil {
@@ -57,13 +57,13 @@ func Decrypt(key []byte, ciphertext []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	if len(ciphertext) < gcm.NonceSize() {
+	if len(text) < gcm.NonceSize() {
 		return nil, errors.New("malformed ciphertext")
 	}
 
 	return gcm.Open(nil,
-		ciphertext[:gcm.NonceSize()],
-		ciphertext[gcm.NonceSize():],
+		text[:gcm.NonceSize()],
+		text[gcm.NonceSize():],
 		nil,
 	)
 }

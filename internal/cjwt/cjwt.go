@@ -1,10 +1,16 @@
 package cjwt
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 // Claims — структура утверждений, которая включает стандартные утверждения и
@@ -41,6 +47,9 @@ func BuildJWTString(userID int) (string, error) {
 
 // GetUserID - получает UserID из токена.
 func GetUserID(tokenString string) int {
+	if len(tokenString) == 0 {
+		return -1
+	}
 	// создаём экземпляр структуры с утверждениями
 	claims := &Claims{}
 	// парсим из строки токена tokenString в структуру claims
@@ -61,4 +70,37 @@ func GetUserID(tokenString string) int {
 
 	// возвращаем ID пользователя в читаемом виде
 	return claims.UserID
+}
+
+type UserNum string
+
+func JWTInterceptor(
+	ctx context.Context,
+	req interface{},
+	i *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler,
+) (interface{}, error) {
+	isRegisterUserMethod := strings.Contains(i.FullMethod, "RegisterUser")
+	isAuthUserMethod := strings.Contains(i.FullMethod, "AuthUser")
+
+	if isRegisterUserMethod || isAuthUserMethod {
+		return handler(ctx, req)
+	}
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, errors.New(`broken context metadata`)
+	}
+
+	reqToken := ``
+	bearerTokens := md[`authorization`]
+	if len(bearerTokens) > 0 {
+		splitToken := strings.Split(bearerTokens[0], "Bearer ")
+		reqToken = splitToken[1]
+	}
+
+	userNumber := UserNum(`UserID`)
+	UserID := GetUserID(reqToken)
+
+	newCtx := context.WithValue(ctx, userNumber, strconv.Itoa(UserID))
+	return handler(newCtx, req)
 }

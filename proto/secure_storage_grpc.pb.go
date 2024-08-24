@@ -21,6 +21,15 @@ type SecureStorageClient interface {
 	CheckService(ctx context.Context, in *CheckServiceRequest, opts ...grpc.CallOption) (*CheckServiceResponse, error)
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
 	AuthUser(ctx context.Context, in *AuthUserRequest, opts ...grpc.CallOption) (*AuthUserResponse, error)
+	SaveUserCard(ctx context.Context, in *SaveUserCardRequest, opts ...grpc.CallOption) (*SaveUserCardResponse, error)
+	GetUserCards(ctx context.Context, in *GetUserCardsRequest, opts ...grpc.CallOption) (*GetUserCardsResponse, error)
+	SaveUserCredentials(ctx context.Context, in *SaveUserCredentialsRequest, opts ...grpc.CallOption) (*SaveUserCredentialsResponse, error)
+	GetUserCredentials(ctx context.Context, in *GetUserCredentialsRequest, opts ...grpc.CallOption) (*GetUserCredentialsResponse, error)
+	SaveUserPlain(ctx context.Context, in *SaveUserPlainRequest, opts ...grpc.CallOption) (*SaveUserPlainResponse, error)
+	GetUserPlains(ctx context.Context, in *GetUserPlainsRequest, opts ...grpc.CallOption) (*GetUserPlainResponse, error)
+	SaveUserBinary(ctx context.Context, in *SaveUserBinaryRequest, opts ...grpc.CallOption) (*SaveUserBinaryResponse, error)
+	GetUserBinary(ctx context.Context, in *GetUserBinaryRequest, opts ...grpc.CallOption) (*GetUserBinaryResponse, error)
+	GetUserBinaryList(ctx context.Context, in *GetUserBinaryListRequest, opts ...grpc.CallOption) (*GetUserBinaryListResponse, error)
 }
 
 type secureStorageClient struct {
@@ -58,6 +67,87 @@ func (c *secureStorageClient) AuthUser(ctx context.Context, in *AuthUserRequest,
 	return out, nil
 }
 
+func (c *secureStorageClient) SaveUserCard(ctx context.Context, in *SaveUserCardRequest, opts ...grpc.CallOption) (*SaveUserCardResponse, error) {
+	out := new(SaveUserCardResponse)
+	err := c.cc.Invoke(ctx, "/secure_storage.SecureStorage/SaveUserCard", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *secureStorageClient) GetUserCards(ctx context.Context, in *GetUserCardsRequest, opts ...grpc.CallOption) (*GetUserCardsResponse, error) {
+	out := new(GetUserCardsResponse)
+	err := c.cc.Invoke(ctx, "/secure_storage.SecureStorage/GetUserCards", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *secureStorageClient) SaveUserCredentials(ctx context.Context, in *SaveUserCredentialsRequest, opts ...grpc.CallOption) (*SaveUserCredentialsResponse, error) {
+	out := new(SaveUserCredentialsResponse)
+	err := c.cc.Invoke(ctx, "/secure_storage.SecureStorage/SaveUserCredentials", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *secureStorageClient) GetUserCredentials(ctx context.Context, in *GetUserCredentialsRequest, opts ...grpc.CallOption) (*GetUserCredentialsResponse, error) {
+	out := new(GetUserCredentialsResponse)
+	err := c.cc.Invoke(ctx, "/secure_storage.SecureStorage/GetUserCredentials", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *secureStorageClient) SaveUserPlain(ctx context.Context, in *SaveUserPlainRequest, opts ...grpc.CallOption) (*SaveUserPlainResponse, error) {
+	out := new(SaveUserPlainResponse)
+	err := c.cc.Invoke(ctx, "/secure_storage.SecureStorage/SaveUserPlain", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *secureStorageClient) GetUserPlains(ctx context.Context, in *GetUserPlainsRequest, opts ...grpc.CallOption) (*GetUserPlainResponse, error) {
+	out := new(GetUserPlainResponse)
+	err := c.cc.Invoke(ctx, "/secure_storage.SecureStorage/GetUserPlains", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *secureStorageClient) SaveUserBinary(ctx context.Context, in *SaveUserBinaryRequest, opts ...grpc.CallOption) (*SaveUserBinaryResponse, error) {
+	out := new(SaveUserBinaryResponse)
+	err := c.cc.Invoke(ctx, "/secure_storage.SecureStorage/SaveUserBinary", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *secureStorageClient) GetUserBinary(ctx context.Context, in *GetUserBinaryRequest, opts ...grpc.CallOption) (*GetUserBinaryResponse, error) {
+	out := new(GetUserBinaryResponse)
+	err := c.cc.Invoke(ctx, "/secure_storage.SecureStorage/GetUserBinary", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *secureStorageClient) GetUserBinaryList(ctx context.Context, in *GetUserBinaryListRequest, opts ...grpc.CallOption) (*GetUserBinaryListResponse, error) {
+	out := new(GetUserBinaryListResponse)
+	err := c.cc.Invoke(ctx, "/secure_storage.SecureStorage/GetUserBinaryList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SecureStorageServer is the server API for SecureStorage service.
 // All implementations must embed UnimplementedSecureStorageServer
 // for forward compatibility
@@ -65,6 +155,15 @@ type SecureStorageServer interface {
 	CheckService(context.Context, *CheckServiceRequest) (*CheckServiceResponse, error)
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	AuthUser(context.Context, *AuthUserRequest) (*AuthUserResponse, error)
+	SaveUserCard(context.Context, *SaveUserCardRequest) (*SaveUserCardResponse, error)
+	GetUserCards(context.Context, *GetUserCardsRequest) (*GetUserCardsResponse, error)
+	SaveUserCredentials(context.Context, *SaveUserCredentialsRequest) (*SaveUserCredentialsResponse, error)
+	GetUserCredentials(context.Context, *GetUserCredentialsRequest) (*GetUserCredentialsResponse, error)
+	SaveUserPlain(context.Context, *SaveUserPlainRequest) (*SaveUserPlainResponse, error)
+	GetUserPlains(context.Context, *GetUserPlainsRequest) (*GetUserPlainResponse, error)
+	SaveUserBinary(context.Context, *SaveUserBinaryRequest) (*SaveUserBinaryResponse, error)
+	GetUserBinary(context.Context, *GetUserBinaryRequest) (*GetUserBinaryResponse, error)
+	GetUserBinaryList(context.Context, *GetUserBinaryListRequest) (*GetUserBinaryListResponse, error)
 	mustEmbedUnimplementedSecureStorageServer()
 }
 
@@ -80,6 +179,33 @@ func (UnimplementedSecureStorageServer) RegisterUser(context.Context, *RegisterU
 }
 func (UnimplementedSecureStorageServer) AuthUser(context.Context, *AuthUserRequest) (*AuthUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthUser not implemented")
+}
+func (UnimplementedSecureStorageServer) SaveUserCard(context.Context, *SaveUserCardRequest) (*SaveUserCardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveUserCard not implemented")
+}
+func (UnimplementedSecureStorageServer) GetUserCards(context.Context, *GetUserCardsRequest) (*GetUserCardsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserCards not implemented")
+}
+func (UnimplementedSecureStorageServer) SaveUserCredentials(context.Context, *SaveUserCredentialsRequest) (*SaveUserCredentialsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveUserCredentials not implemented")
+}
+func (UnimplementedSecureStorageServer) GetUserCredentials(context.Context, *GetUserCredentialsRequest) (*GetUserCredentialsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserCredentials not implemented")
+}
+func (UnimplementedSecureStorageServer) SaveUserPlain(context.Context, *SaveUserPlainRequest) (*SaveUserPlainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveUserPlain not implemented")
+}
+func (UnimplementedSecureStorageServer) GetUserPlains(context.Context, *GetUserPlainsRequest) (*GetUserPlainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserPlains not implemented")
+}
+func (UnimplementedSecureStorageServer) SaveUserBinary(context.Context, *SaveUserBinaryRequest) (*SaveUserBinaryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveUserBinary not implemented")
+}
+func (UnimplementedSecureStorageServer) GetUserBinary(context.Context, *GetUserBinaryRequest) (*GetUserBinaryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserBinary not implemented")
+}
+func (UnimplementedSecureStorageServer) GetUserBinaryList(context.Context, *GetUserBinaryListRequest) (*GetUserBinaryListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserBinaryList not implemented")
 }
 func (UnimplementedSecureStorageServer) mustEmbedUnimplementedSecureStorageServer() {}
 
@@ -148,6 +274,168 @@ func _SecureStorage_AuthUser_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SecureStorage_SaveUserCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveUserCardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecureStorageServer).SaveUserCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/secure_storage.SecureStorage/SaveUserCard",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecureStorageServer).SaveUserCard(ctx, req.(*SaveUserCardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecureStorage_GetUserCards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserCardsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecureStorageServer).GetUserCards(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/secure_storage.SecureStorage/GetUserCards",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecureStorageServer).GetUserCards(ctx, req.(*GetUserCardsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecureStorage_SaveUserCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveUserCredentialsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecureStorageServer).SaveUserCredentials(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/secure_storage.SecureStorage/SaveUserCredentials",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecureStorageServer).SaveUserCredentials(ctx, req.(*SaveUserCredentialsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecureStorage_GetUserCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserCredentialsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecureStorageServer).GetUserCredentials(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/secure_storage.SecureStorage/GetUserCredentials",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecureStorageServer).GetUserCredentials(ctx, req.(*GetUserCredentialsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecureStorage_SaveUserPlain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveUserPlainRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecureStorageServer).SaveUserPlain(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/secure_storage.SecureStorage/SaveUserPlain",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecureStorageServer).SaveUserPlain(ctx, req.(*SaveUserPlainRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecureStorage_GetUserPlains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserPlainsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecureStorageServer).GetUserPlains(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/secure_storage.SecureStorage/GetUserPlains",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecureStorageServer).GetUserPlains(ctx, req.(*GetUserPlainsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecureStorage_SaveUserBinary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveUserBinaryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecureStorageServer).SaveUserBinary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/secure_storage.SecureStorage/SaveUserBinary",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecureStorageServer).SaveUserBinary(ctx, req.(*SaveUserBinaryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecureStorage_GetUserBinary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserBinaryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecureStorageServer).GetUserBinary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/secure_storage.SecureStorage/GetUserBinary",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecureStorageServer).GetUserBinary(ctx, req.(*GetUserBinaryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SecureStorage_GetUserBinaryList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserBinaryListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SecureStorageServer).GetUserBinaryList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/secure_storage.SecureStorage/GetUserBinaryList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SecureStorageServer).GetUserBinaryList(ctx, req.(*GetUserBinaryListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SecureStorage_ServiceDesc is the grpc.ServiceDesc for SecureStorage service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -166,6 +454,42 @@ var SecureStorage_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthUser",
 			Handler:    _SecureStorage_AuthUser_Handler,
+		},
+		{
+			MethodName: "SaveUserCard",
+			Handler:    _SecureStorage_SaveUserCard_Handler,
+		},
+		{
+			MethodName: "GetUserCards",
+			Handler:    _SecureStorage_GetUserCards_Handler,
+		},
+		{
+			MethodName: "SaveUserCredentials",
+			Handler:    _SecureStorage_SaveUserCredentials_Handler,
+		},
+		{
+			MethodName: "GetUserCredentials",
+			Handler:    _SecureStorage_GetUserCredentials_Handler,
+		},
+		{
+			MethodName: "SaveUserPlain",
+			Handler:    _SecureStorage_SaveUserPlain_Handler,
+		},
+		{
+			MethodName: "GetUserPlains",
+			Handler:    _SecureStorage_GetUserPlains_Handler,
+		},
+		{
+			MethodName: "SaveUserBinary",
+			Handler:    _SecureStorage_SaveUserBinary_Handler,
+		},
+		{
+			MethodName: "GetUserBinary",
+			Handler:    _SecureStorage_GetUserBinary_Handler,
+		},
+		{
+			MethodName: "GetUserBinaryList",
+			Handler:    _SecureStorage_GetUserBinaryList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
