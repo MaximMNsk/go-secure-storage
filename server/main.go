@@ -138,7 +138,7 @@ func (s *SecureStorageServer) Start() error {
 	}
 
 	// clear open key for safety
-	masterKey = nil //nolint:govet
+	masterKey = nil //nolint:golang-ci
 
 	listener, err := net.Listen("tcp", s.Config.AppAddr)
 	if err != nil {
@@ -378,6 +378,7 @@ func (s *SecureStorageServer) GetUserCards(ctx context.Context, _ *pb.GetUserCar
 	}
 
 	if len(data) == 0 {
+		s.Logger.Warn().Stack().Msg(errNoCards)
 		return &pb.GetUserCardsResponse{
 			Answer: pb.Answer_NotFound,
 		}, nil
@@ -788,7 +789,7 @@ func main() {
 	serv := new(SecureStorageServer)
 	err := serv.Init(ctx)
 	if err != nil {
-		serv.Logger.Error().Stack().Err(err).Msg(``)
+		serv.Logger.Error().Stack().Err(err).Msg(errUnexpected)
 		return
 	}
 
