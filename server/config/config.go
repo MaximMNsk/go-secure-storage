@@ -35,7 +35,9 @@ type Config struct {
 
 func (c *Config) Init() error {
 	if flag.Lookup(`c`) == nil {
-		flag.StringVar(&c.ConfigFile, "c", "./server.json", "config file path. by default - in the same directory")
+		if len(c.ConfigFile) == 0 {
+			flag.StringVar(&c.ConfigFile, "c", "./server.json", "config file path. by default - in the same directory")
+		}
 	}
 	if flag.Lookup(`key1`) == nil {
 		flag.StringVar(&c.Keys.Pair1, "key1", "", "enter first key pair")

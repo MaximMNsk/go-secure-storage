@@ -9,6 +9,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -16,11 +17,13 @@ import (
 	"github.com/MaximMNsk/go-secure-storage/server/config"
 )
 
+// Storage структура объекта для работы с БД.
 type Storage struct {
-	Pool   *pgxpool.Pool
+	Pool   Pool
 	Config *config.Config
 }
 
+// Init инициализирует объект для работы с БД в зависимости от контекста сервера и конфигурации.
 func (d *Storage) Init(ctx context.Context, config config.Config) error {
 	d.Config = &config
 	cfg, err := pgxpool.ParseConfig(config.DatabaseConnectionString)
@@ -46,15 +49,13 @@ func (d *Storage) Init(ctx context.Context, config config.Config) error {
 	return nil
 }
 
+// Destroy закрывает все активные коннекты.
 func (d *Storage) Destroy() error {
 	d.Pool.Close()
-	stat := d.Pool.Stat()
-	if stat.TotalConns() > 0 {
-		return errors.New(`not all connections have been closed`)
-	}
 	return nil
 }
 
+// Ping проверяет доступность БД.
 func (d *Storage) Ping(ctx context.Context) bool {
 	err := d.Pool.Ping(ctx)
 	return err == nil
@@ -97,6 +98,31 @@ const (
 	getUserDataSql  = `SELECT user_data::bytea FROM user_data WHERE user_id = $1 and data_type = $2`
 )
 
+// Pool - интерфейс пула соединений.
+//
+//go:generate go run github.com/vektra/mockery/v2@v2.43.0 --name=Pool
+type Pool interface {
+	Ping(ctx context.Context) error
+	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
+	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
+	SendBatch(ctx context.Context, b *pgx.Batch) pgx.BatchResults
+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+	Close()
+}
+
+// PGStorage интерфейс для основного взаимодействия с пакетом.
+//
+//go:generate go run github.com/vektra/mockery/v2@v2.43.0 --name=PGStorage
+type PGStorage interface {
+	SaveUser(ctx context.Context, name, secondName, login, pwdHash string, userKey []byte) (int, bool, error)
+	GetUserByLogin(ctx context.Context, login string) (int, string, string, error)
+	SetUserKey(ctx context.Context, userID int, key []byte) error
+	DisableUserKeys(ctx context.Context, userID int) error
+	GetUserKeyByLogin(ctx context.Context, login string) ([]byte, error)
+	SaveUserData(ctx context.Context, userID int, dataType string, data []byte) error
+	GetUserData(ctx context.Context, userID int, dataType string) ([][]byte, error)
+}
+
 // SaveUser - сохраняем пользователя. Возвращаем:
 // userID, duplicate, error
 func (d *Storage) SaveUser(ctx context.Context, name, secondName, login, pwdHash string, userKey []byte) (int, bool, error) {
@@ -131,6 +157,7 @@ func (d *Storage) GetUserByLogin(ctx context.Context, login string) (int, string
 	return id, credentials, pwdHash, nil
 }
 
+// SetUserKey сохраняет ключ пользователя.
 func (d *Storage) SetUserKey(ctx context.Context, userID int, key []byte) error {
 	_, err := d.Pool.Exec(ctx, setUserKeySql, userID, key)
 	if err != nil {
@@ -139,6 +166,7 @@ func (d *Storage) SetUserKey(ctx context.Context, userID int, key []byte) error 
 	return nil
 }
 
+// DisableUserKeys деактивирует все активные ключи пользователя.
 func (d *Storage) DisableUserKeys(ctx context.Context, userID int) error {
 	_, err := d.Pool.Exec(ctx, disableUserKeysSql, userID)
 	if err != nil {
@@ -147,6 +175,7 @@ func (d *Storage) DisableUserKeys(ctx context.Context, userID int) error {
 	return nil
 }
 
+// GetUserKeyByLogin возвращает ключ пользователя по логину.
 func (d *Storage) GetUserKeyByLogin(ctx context.Context, login string) ([]byte, error) {
 	var key []byte
 	query := d.Pool.QueryRow(ctx, getUserKeyByLoginSql, login)
@@ -157,6 +186,7 @@ func (d *Storage) GetUserKeyByLogin(ctx context.Context, login string) ([]byte, 
 	return key, nil
 }
 
+// SaveUserData сохраняет пользовательские данные в зависимости от типа.
 func (d *Storage) SaveUserData(ctx context.Context, userID int, dataType string, data []byte) error {
 	_, err := d.Pool.Exec(ctx, saveUserDataSql, userID, dataType, data)
 	if err != nil {
@@ -165,6 +195,7 @@ func (d *Storage) SaveUserData(ctx context.Context, userID int, dataType string,
 	return nil
 }
 
+// GetUserData возвращает пользовательские данные в зависимости от типа.
 func (d *Storage) GetUserData(ctx context.Context, userID int, dataType string) ([][]byte, error) {
 	var dataList [][]byte
 	query, err := d.Pool.Query(ctx, getUserDataSql, userID, dataType)
