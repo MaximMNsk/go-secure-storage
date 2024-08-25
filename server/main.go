@@ -138,7 +138,7 @@ func (s *SecureStorageServer) Start() error {
 	}
 
 	// clear open key for safety
-	masterKey = nil //nolint:golangci-lint
+	masterKey = nil //nolint
 
 	listener, err := net.Listen("tcp", s.Config.AppAddr)
 	if err != nil {
