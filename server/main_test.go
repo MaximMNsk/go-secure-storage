@@ -79,7 +79,7 @@ func TestSecureStorageServer_RegisterUser(t *testing.T) {
 			dbMock := pgmock.NewPGStorage(t)
 
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = `cmd/server/server.json`
 			err := s.Init(context.Background())
 			require.NoError(t, err)
 
