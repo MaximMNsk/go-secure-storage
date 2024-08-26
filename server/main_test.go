@@ -482,7 +482,6 @@ func TestSecureStorageServer_SaveUserCredentials(t *testing.T) {
 func TestSecureStorageServer_GetUserCredentials(t *testing.T) {
 	type args struct {
 		ctx          context.Context
-		in           *pb.GetUserCredentialsRequest
 		sessKey      []byte
 		encMasterKey []byte
 		encData      []byte
@@ -571,7 +570,6 @@ func TestSecureStorageServer_GetUserCredentials(t *testing.T) {
 func TestSecureStorageServer_SaveUserPlain(t *testing.T) {
 	type args struct {
 		ctx          context.Context
-		in           *pb.SaveUserCardRequest
 		sessKey      []byte
 		encMasterKey []byte
 	}
@@ -632,7 +630,6 @@ func TestSecureStorageServer_SaveUserPlain(t *testing.T) {
 func TestSecureStorageServer_GetUserPlains(t *testing.T) {
 	type args struct {
 		ctx          context.Context
-		in           *pb.GetUserPlainsRequest
 		sessKey      []byte
 		encMasterKey []byte
 		encData      []byte
