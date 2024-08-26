@@ -1,0 +1,161 @@
+syntax = "proto3";
+
+package secure_storage;
+
+option go_package = "secure_storage/proto";
+// exec: protoc --go_out=. --go_opt=paths=source_relative   --go-grpc_out=. --go-grpc_opt=paths=source_relative   proto/secure_storage.proto
+
+
+// Errors
+enum Answer {
+  Ok = 0;
+  AlreadyExists = 1;
+  UserNotFound = 2;
+  IncorrectPwd = 3;
+  UnauthorizedUser = 4;
+  NotFound = 5;
+}
+
+
+// Check service health
+message CheckServiceRequest {}
+message CheckServiceResponse{
+  bool up = 1;
+  Answer answer = 2;
+}
+
+
+// Register User
+message User {
+  string name = 3;
+  string second_name = 4;
+}
+message RegisterUserRequest {
+  string login = 1;
+  string password = 2;
+  User user = 3;
+}
+message RegisterUserResponse {
+  Answer answer = 1;
+  string token = 2;
+}
+
+
+// Auth User
+message AuthUserRequest {
+  string login = 1;
+  string password = 2;
+}
+message AuthUserResponse {
+  Answer answer = 1;
+  string token = 2;
+}
+
+
+// Save User Card
+message Expired {
+  string year = 1;
+  string month = 2;
+}
+message Card {
+  string card_number = 1;
+  int32 cvv = 2;
+  string cardholder = 3;
+  Expired expired = 4;
+}
+message SaveUserCardRequest {
+  Card card = 1;
+}
+message SaveUserCardResponse {
+    Answer answer = 1;
+}
+
+// Get User Cards
+message GetUserCardsRequest {}
+message GetUserCardsResponse {
+  repeated Card cards = 1;
+  Answer answer = 2;
+}
+
+
+// Save User Credentials
+message Credentials {
+  string source = 1;
+  string login = 2;
+  string password = 3;
+}
+message SaveUserCredentialsRequest {
+  Credentials credentials = 1;
+}
+message SaveUserCredentialsResponse {
+  Answer answer = 1;
+}
+
+// Get User Credentials
+message GetUserCredentialsRequest {}
+message GetUserCredentialsResponse {
+  repeated Credentials credentials = 1;
+  Answer answer = 2;
+}
+
+
+// Save User Plain
+message Plain {
+  string title = 1;
+  string body_text = 2;
+}
+message SaveUserPlainRequest {
+  Plain plain = 1;
+}
+message SaveUserPlainResponse {
+  Answer answer = 1;
+}
+
+message GetUserPlainsRequest {}
+message GetUserPlainResponse {
+  repeated Plain plains = 1;
+  Answer answer = 2;
+}
+
+
+// User Binary
+message SaveUserBinaryRequest {
+  string name = 1;
+  bytes binary = 2;
+}
+message SaveUserBinaryResponse {
+  Answer answer = 1;
+}
+
+message GetUserBinaryRequest {
+  string name = 1;
+}
+message GetUserBinaryResponse {
+  string name = 1;
+  bytes binary = 2;
+  Answer answer = 3;
+}
+
+message GetUserBinaryListRequest{}
+message GetUserBinaryListResponse{
+  repeated string names = 1;
+  Answer answer = 2;
+}
+
+
+
+// Services
+service SecureStorage {
+  rpc CheckService(CheckServiceRequest) returns (CheckServiceResponse);
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
+  rpc AuthUser(AuthUserRequest) returns (AuthUserResponse);
+  rpc SaveUserCard(SaveUserCardRequest) returns (SaveUserCardResponse);
+  rpc GetUserCards(GetUserCardsRequest) returns (GetUserCardsResponse);
+  rpc SaveUserCredentials(SaveUserCredentialsRequest) returns (SaveUserCredentialsResponse);
+  rpc GetUserCredentials(GetUserCredentialsRequest) returns (GetUserCredentialsResponse);
+  rpc SaveUserPlain(SaveUserPlainRequest) returns (SaveUserPlainResponse);
+  rpc GetUserPlains(GetUserPlainsRequest) returns (GetUserPlainResponse);
+  rpc SaveUserBinary(SaveUserBinaryRequest) returns (SaveUserBinaryResponse);
+  rpc GetUserBinary(GetUserBinaryRequest) returns (GetUserBinaryResponse);
+  rpc GetUserBinaryList(GetUserBinaryListRequest) returns (GetUserBinaryListResponse);
+}
