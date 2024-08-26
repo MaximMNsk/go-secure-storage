@@ -79,8 +79,8 @@ func TestSecureStorageServer_RegisterUser(t *testing.T) {
 			dbMock := pgmock.NewPGStorage(t)
 
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `cmd/server/server.json`
-			err := s.Init(context.Background())
+			s.Config.ConfigFile = `../cmd/server/server.json`
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			dbMock.
@@ -175,7 +175,7 @@ func TestSecureStorageServer_AuthUser(t *testing.T) {
 
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			dbMock.
@@ -243,7 +243,7 @@ func TestSecureStorageServer_CheckService(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			ctx := context.WithValue(context.Background(), cjwt.UserNum(`UserID`), tt.args.uid)
@@ -269,7 +269,6 @@ func TestSecureStorageServer_CheckService(t *testing.T) {
 func TestSecureStorageServer_SaveUserCard(t *testing.T) {
 	type args struct {
 		ctx          context.Context
-		in           *pb.SaveUserCardRequest
 		sessKey      []byte
 		encMasterKey []byte
 	}
@@ -304,7 +303,7 @@ func TestSecureStorageServer_SaveUserCard(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			pgMock := pgmock.NewPGStorage(t)
@@ -335,7 +334,6 @@ func TestSecureStorageServer_SaveUserCard(t *testing.T) {
 func TestSecureStorageServer_GetUserCards(t *testing.T) {
 	type args struct {
 		ctx          context.Context
-		in           *pb.GetUserCardsRequest
 		sessKey      []byte
 		encMasterKey []byte
 		encData      []byte
@@ -395,7 +393,7 @@ func TestSecureStorageServer_GetUserCards(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			pgMock := pgmock.NewPGStorage(t)
@@ -424,7 +422,6 @@ func TestSecureStorageServer_GetUserCards(t *testing.T) {
 func TestSecureStorageServer_SaveUserCredentials(t *testing.T) {
 	type args struct {
 		ctx          context.Context
-		in           *pb.SaveUserCardRequest
 		sessKey      []byte
 		encMasterKey []byte
 	}
@@ -459,7 +456,7 @@ func TestSecureStorageServer_SaveUserCredentials(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			pgMock := pgmock.NewPGStorage(t)
@@ -545,7 +542,7 @@ func TestSecureStorageServer_GetUserCredentials(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			pgMock := pgmock.NewPGStorage(t)
@@ -609,7 +606,7 @@ func TestSecureStorageServer_SaveUserPlain(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			pgMock := pgmock.NewPGStorage(t)
@@ -695,7 +692,7 @@ func TestSecureStorageServer_GetUserPlains(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			pgMock := pgmock.NewPGStorage(t)
@@ -759,7 +756,7 @@ func TestSecureStorageServer_SaveUserBinary(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			pgMock := pgmock.NewPGStorage(t)
@@ -840,7 +837,7 @@ func TestSecureStorageServer_GetUserBinaryList(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			minioMock := miniomock.NewMinioStorage(t)
@@ -898,7 +895,7 @@ func TestSecureStorageServer_GetUserBinary(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
 			s.Config.ConfigFile = `../cmd/server/server.json`
-			err := s.Init(context.Background())
+			err := s.Config.Init()
 			require.NoError(t, err)
 
 			pgMock := pgmock.NewPGStorage(t)
