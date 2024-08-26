@@ -20,12 +20,28 @@ import (
 // Storage структура объекта для работы с БД.
 type Storage struct {
 	Pool   Pool
-	Config *config.Config
+	Config config.Config
+}
+
+// PGStorage интерфейс для основного взаимодействия с пакетом.
+//
+//go:generate go run github.com/vektra/mockery/v2@v2.43.0 --name=PGStorage
+type PGStorage interface {
+	Init(ctx context.Context, config config.Config) error
+	Destroy() error
+	Ping(ctx context.Context) bool
+	SaveUser(ctx context.Context, name, secondName, login, pwdHash string, userKey []byte) (int, bool, error)
+	GetUserByLogin(ctx context.Context, login string) (int, string, string, error)
+	SetUserKey(ctx context.Context, userID int, key []byte) error
+	DisableUserKeys(ctx context.Context, userID int) error
+	GetUserKeyByLogin(ctx context.Context, login string) ([]byte, error)
+	SaveUserData(ctx context.Context, userID int, dataType string, data []byte) error
+	GetUserData(ctx context.Context, userID int, dataType string) ([][]byte, error)
 }
 
 // Init инициализирует объект для работы с БД в зависимости от контекста сервера и конфигурации.
 func (d *Storage) Init(ctx context.Context, config config.Config) error {
-	d.Config = &config
+	d.Config = config
 	cfg, err := pgxpool.ParseConfig(config.DatabaseConnectionString)
 	if err != nil {
 		return err
@@ -110,19 +126,6 @@ type Pool interface {
 	Close()
 }
 
-// PGStorage интерфейс для основного взаимодействия с пакетом.
-//
-//go:generate go run github.com/vektra/mockery/v2@v2.43.0 --name=PGStorage
-type PGStorage interface {
-	SaveUser(ctx context.Context, name, secondName, login, pwdHash string, userKey []byte) (int, bool, error)
-	GetUserByLogin(ctx context.Context, login string) (int, string, string, error)
-	SetUserKey(ctx context.Context, userID int, key []byte) error
-	DisableUserKeys(ctx context.Context, userID int) error
-	GetUserKeyByLogin(ctx context.Context, login string) ([]byte, error)
-	SaveUserData(ctx context.Context, userID int, dataType string, data []byte) error
-	GetUserData(ctx context.Context, userID int, dataType string) ([][]byte, error)
-}
-
 // SaveUser - сохраняем пользователя. Возвращаем:
 // userID, duplicate, error
 func (d *Storage) SaveUser(ctx context.Context, name, secondName, login, pwdHash string, userKey []byte) (int, bool, error) {
@@ -145,7 +148,7 @@ func (d *Storage) SaveUser(ctx context.Context, name, secondName, login, pwdHash
 }
 
 // GetUserByLogin - возвращает инфо о пользователе:
-// id, credentials, pwd_hash error
+// id, credentials, pwd_hash, error
 func (d *Storage) GetUserByLogin(ctx context.Context, login string) (int, string, string, error) {
 	var credentials, pwdHash string
 	var id int

@@ -18,6 +18,16 @@ type Storage struct {
 	Client *minio.Client
 }
 
+//go:generate go run github.com/vektra/mockery/v2@v2.43.0 --name=MinioStorage
+type MinioStorage interface {
+	Init(_ context.Context, config config.Config) error
+	Destroy() error
+	Ping(_ context.Context) bool
+	PutObject(ctx context.Context, userID, objectName string, object []byte) error
+	GetObject(ctx context.Context, userID, name string) ([]byte, error)
+	ListObjects(ctx context.Context, userID string) ([]string, error)
+}
+
 func (m *Storage) Init(_ context.Context, config config.Config) error {
 	var err error
 	m.Client, err = minio.New(config.Minio.Endpoint, &minio.Options{

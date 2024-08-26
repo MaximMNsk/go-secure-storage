@@ -123,7 +123,8 @@ type CheckServiceResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Up bool `protobuf:"varint,1,opt,name=up,proto3" json:"up,omitempty"`
+	Up     bool   `protobuf:"varint,1,opt,name=up,proto3" json:"up,omitempty"`
+	Answer Answer `protobuf:"varint,2,opt,name=answer,proto3,enum=secure_storage.Answer" json:"answer,omitempty"`
 }
 
 func (x *CheckServiceResponse) Reset() {
@@ -163,6 +164,13 @@ func (x *CheckServiceResponse) GetUp() bool {
 		return x.Up
 	}
 	return false
+}
+
+func (x *CheckServiceResponse) GetAnswer() Answer {
+	if x != nil {
+		return x.Answer
+	}
+	return Answer_Ok
 }
 
 // Register User
@@ -1573,9 +1581,12 @@ var file_proto_secure_storage_proto_rawDesc = []byte{
 	0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x0e, 0x73, 0x65,
 	0x63, 0x75, 0x72, 0x65, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x22, 0x15, 0x0a, 0x13,
 	0x43, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x22, 0x26, 0x0a, 0x14, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x65, 0x72, 0x76,
+	0x65, 0x73, 0x74, 0x22, 0x56, 0x0a, 0x14, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x53, 0x65, 0x72, 0x76,
 	0x69, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x75,
-	0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x02, 0x75, 0x70, 0x22, 0x3b, 0x0a, 0x04, 0x55,
+	0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x02, 0x75, 0x70, 0x12, 0x2e, 0x0a, 0x06, 0x61,
+	0x6e, 0x73, 0x77, 0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x16, 0x2e, 0x73, 0x65,
+	0x63, 0x75, 0x72, 0x65, 0x5f, 0x73, 0x74, 0x6f, 0x72, 0x61, 0x67, 0x65, 0x2e, 0x41, 0x6e, 0x73,
+	0x77, 0x65, 0x72, 0x52, 0x06, 0x61, 0x6e, 0x73, 0x77, 0x65, 0x72, 0x22, 0x3b, 0x0a, 0x04, 0x55,
 	0x73, 0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x73, 0x65, 0x63, 0x6f, 0x6e,
 	0x64, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a, 0x73, 0x65,
@@ -1839,54 +1850,55 @@ var file_proto_secure_storage_proto_goTypes = []interface{}{
 	(*GetUserBinaryListResponse)(nil),   // 29: secure_storage.GetUserBinaryListResponse
 }
 var file_proto_secure_storage_proto_depIdxs = []int32{
-	3,  // 0: secure_storage.RegisterUserRequest.user:type_name -> secure_storage.User
-	0,  // 1: secure_storage.RegisterUserResponse.answer:type_name -> secure_storage.Answer
-	0,  // 2: secure_storage.AuthUserResponse.answer:type_name -> secure_storage.Answer
-	8,  // 3: secure_storage.Card.expired:type_name -> secure_storage.Expired
-	9,  // 4: secure_storage.SaveUserCardRequest.card:type_name -> secure_storage.Card
-	0,  // 5: secure_storage.SaveUserCardResponse.answer:type_name -> secure_storage.Answer
-	9,  // 6: secure_storage.GetUserCardsResponse.cards:type_name -> secure_storage.Card
-	0,  // 7: secure_storage.GetUserCardsResponse.answer:type_name -> secure_storage.Answer
-	14, // 8: secure_storage.SaveUserCredentialsRequest.credentials:type_name -> secure_storage.Credentials
-	0,  // 9: secure_storage.SaveUserCredentialsResponse.answer:type_name -> secure_storage.Answer
-	14, // 10: secure_storage.GetUserCredentialsResponse.credentials:type_name -> secure_storage.Credentials
-	0,  // 11: secure_storage.GetUserCredentialsResponse.answer:type_name -> secure_storage.Answer
-	19, // 12: secure_storage.SaveUserPlainRequest.plain:type_name -> secure_storage.Plain
-	0,  // 13: secure_storage.SaveUserPlainResponse.answer:type_name -> secure_storage.Answer
-	19, // 14: secure_storage.GetUserPlainResponse.plains:type_name -> secure_storage.Plain
-	0,  // 15: secure_storage.GetUserPlainResponse.answer:type_name -> secure_storage.Answer
-	0,  // 16: secure_storage.SaveUserBinaryResponse.answer:type_name -> secure_storage.Answer
-	0,  // 17: secure_storage.GetUserBinaryResponse.answer:type_name -> secure_storage.Answer
-	0,  // 18: secure_storage.GetUserBinaryListResponse.answer:type_name -> secure_storage.Answer
-	1,  // 19: secure_storage.SecureStorage.CheckService:input_type -> secure_storage.CheckServiceRequest
-	4,  // 20: secure_storage.SecureStorage.RegisterUser:input_type -> secure_storage.RegisterUserRequest
-	6,  // 21: secure_storage.SecureStorage.AuthUser:input_type -> secure_storage.AuthUserRequest
-	10, // 22: secure_storage.SecureStorage.SaveUserCard:input_type -> secure_storage.SaveUserCardRequest
-	12, // 23: secure_storage.SecureStorage.GetUserCards:input_type -> secure_storage.GetUserCardsRequest
-	15, // 24: secure_storage.SecureStorage.SaveUserCredentials:input_type -> secure_storage.SaveUserCredentialsRequest
-	17, // 25: secure_storage.SecureStorage.GetUserCredentials:input_type -> secure_storage.GetUserCredentialsRequest
-	20, // 26: secure_storage.SecureStorage.SaveUserPlain:input_type -> secure_storage.SaveUserPlainRequest
-	22, // 27: secure_storage.SecureStorage.GetUserPlains:input_type -> secure_storage.GetUserPlainsRequest
-	24, // 28: secure_storage.SecureStorage.SaveUserBinary:input_type -> secure_storage.SaveUserBinaryRequest
-	26, // 29: secure_storage.SecureStorage.GetUserBinary:input_type -> secure_storage.GetUserBinaryRequest
-	28, // 30: secure_storage.SecureStorage.GetUserBinaryList:input_type -> secure_storage.GetUserBinaryListRequest
-	2,  // 31: secure_storage.SecureStorage.CheckService:output_type -> secure_storage.CheckServiceResponse
-	5,  // 32: secure_storage.SecureStorage.RegisterUser:output_type -> secure_storage.RegisterUserResponse
-	7,  // 33: secure_storage.SecureStorage.AuthUser:output_type -> secure_storage.AuthUserResponse
-	11, // 34: secure_storage.SecureStorage.SaveUserCard:output_type -> secure_storage.SaveUserCardResponse
-	13, // 35: secure_storage.SecureStorage.GetUserCards:output_type -> secure_storage.GetUserCardsResponse
-	16, // 36: secure_storage.SecureStorage.SaveUserCredentials:output_type -> secure_storage.SaveUserCredentialsResponse
-	18, // 37: secure_storage.SecureStorage.GetUserCredentials:output_type -> secure_storage.GetUserCredentialsResponse
-	21, // 38: secure_storage.SecureStorage.SaveUserPlain:output_type -> secure_storage.SaveUserPlainResponse
-	23, // 39: secure_storage.SecureStorage.GetUserPlains:output_type -> secure_storage.GetUserPlainResponse
-	25, // 40: secure_storage.SecureStorage.SaveUserBinary:output_type -> secure_storage.SaveUserBinaryResponse
-	27, // 41: secure_storage.SecureStorage.GetUserBinary:output_type -> secure_storage.GetUserBinaryResponse
-	29, // 42: secure_storage.SecureStorage.GetUserBinaryList:output_type -> secure_storage.GetUserBinaryListResponse
-	31, // [31:43] is the sub-list for method output_type
-	19, // [19:31] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	0,  // 0: secure_storage.CheckServiceResponse.answer:type_name -> secure_storage.Answer
+	3,  // 1: secure_storage.RegisterUserRequest.user:type_name -> secure_storage.User
+	0,  // 2: secure_storage.RegisterUserResponse.answer:type_name -> secure_storage.Answer
+	0,  // 3: secure_storage.AuthUserResponse.answer:type_name -> secure_storage.Answer
+	8,  // 4: secure_storage.Card.expired:type_name -> secure_storage.Expired
+	9,  // 5: secure_storage.SaveUserCardRequest.card:type_name -> secure_storage.Card
+	0,  // 6: secure_storage.SaveUserCardResponse.answer:type_name -> secure_storage.Answer
+	9,  // 7: secure_storage.GetUserCardsResponse.cards:type_name -> secure_storage.Card
+	0,  // 8: secure_storage.GetUserCardsResponse.answer:type_name -> secure_storage.Answer
+	14, // 9: secure_storage.SaveUserCredentialsRequest.credentials:type_name -> secure_storage.Credentials
+	0,  // 10: secure_storage.SaveUserCredentialsResponse.answer:type_name -> secure_storage.Answer
+	14, // 11: secure_storage.GetUserCredentialsResponse.credentials:type_name -> secure_storage.Credentials
+	0,  // 12: secure_storage.GetUserCredentialsResponse.answer:type_name -> secure_storage.Answer
+	19, // 13: secure_storage.SaveUserPlainRequest.plain:type_name -> secure_storage.Plain
+	0,  // 14: secure_storage.SaveUserPlainResponse.answer:type_name -> secure_storage.Answer
+	19, // 15: secure_storage.GetUserPlainResponse.plains:type_name -> secure_storage.Plain
+	0,  // 16: secure_storage.GetUserPlainResponse.answer:type_name -> secure_storage.Answer
+	0,  // 17: secure_storage.SaveUserBinaryResponse.answer:type_name -> secure_storage.Answer
+	0,  // 18: secure_storage.GetUserBinaryResponse.answer:type_name -> secure_storage.Answer
+	0,  // 19: secure_storage.GetUserBinaryListResponse.answer:type_name -> secure_storage.Answer
+	1,  // 20: secure_storage.SecureStorage.CheckService:input_type -> secure_storage.CheckServiceRequest
+	4,  // 21: secure_storage.SecureStorage.RegisterUser:input_type -> secure_storage.RegisterUserRequest
+	6,  // 22: secure_storage.SecureStorage.AuthUser:input_type -> secure_storage.AuthUserRequest
+	10, // 23: secure_storage.SecureStorage.SaveUserCard:input_type -> secure_storage.SaveUserCardRequest
+	12, // 24: secure_storage.SecureStorage.GetUserCards:input_type -> secure_storage.GetUserCardsRequest
+	15, // 25: secure_storage.SecureStorage.SaveUserCredentials:input_type -> secure_storage.SaveUserCredentialsRequest
+	17, // 26: secure_storage.SecureStorage.GetUserCredentials:input_type -> secure_storage.GetUserCredentialsRequest
+	20, // 27: secure_storage.SecureStorage.SaveUserPlain:input_type -> secure_storage.SaveUserPlainRequest
+	22, // 28: secure_storage.SecureStorage.GetUserPlains:input_type -> secure_storage.GetUserPlainsRequest
+	24, // 29: secure_storage.SecureStorage.SaveUserBinary:input_type -> secure_storage.SaveUserBinaryRequest
+	26, // 30: secure_storage.SecureStorage.GetUserBinary:input_type -> secure_storage.GetUserBinaryRequest
+	28, // 31: secure_storage.SecureStorage.GetUserBinaryList:input_type -> secure_storage.GetUserBinaryListRequest
+	2,  // 32: secure_storage.SecureStorage.CheckService:output_type -> secure_storage.CheckServiceResponse
+	5,  // 33: secure_storage.SecureStorage.RegisterUser:output_type -> secure_storage.RegisterUserResponse
+	7,  // 34: secure_storage.SecureStorage.AuthUser:output_type -> secure_storage.AuthUserResponse
+	11, // 35: secure_storage.SecureStorage.SaveUserCard:output_type -> secure_storage.SaveUserCardResponse
+	13, // 36: secure_storage.SecureStorage.GetUserCards:output_type -> secure_storage.GetUserCardsResponse
+	16, // 37: secure_storage.SecureStorage.SaveUserCredentials:output_type -> secure_storage.SaveUserCredentialsResponse
+	18, // 38: secure_storage.SecureStorage.GetUserCredentials:output_type -> secure_storage.GetUserCredentialsResponse
+	21, // 39: secure_storage.SecureStorage.SaveUserPlain:output_type -> secure_storage.SaveUserPlainResponse
+	23, // 40: secure_storage.SecureStorage.GetUserPlains:output_type -> secure_storage.GetUserPlainResponse
+	25, // 41: secure_storage.SecureStorage.SaveUserBinary:output_type -> secure_storage.SaveUserBinaryResponse
+	27, // 42: secure_storage.SecureStorage.GetUserBinary:output_type -> secure_storage.GetUserBinaryResponse
+	29, // 43: secure_storage.SecureStorage.GetUserBinaryList:output_type -> secure_storage.GetUserBinaryListResponse
+	32, // [32:44] is the sub-list for method output_type
+	20, // [20:32] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_proto_secure_storage_proto_init() }

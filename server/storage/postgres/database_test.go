@@ -40,7 +40,7 @@ func TestStorage_SaveUser(t *testing.T) {
 
 	db := Storage{
 		Pool:   mockPool,
-		Config: &cfg,
+		Config: cfg,
 	}
 	_, _, err = db.SaveUser(context.Background(), `asd`, `zxc`, `qwe`, ``, nil)
 	require.Error(t, err)

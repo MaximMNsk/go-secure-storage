@@ -32,8 +32,8 @@ type SecureStorageServer struct {
 	pb.UnimplementedSecureStorageServer
 	Config             config.Config
 	GRPC               *grpc.Server
-	DB                 postgres.Storage
-	Minio              minio.Storage
+	DB                 postgres.PGStorage
+	Minio              minio.MinioStorage
 	Memory             memory.Storage
 	Logger             zerolog.Logger
 	MasterUserID       int
@@ -81,10 +81,12 @@ func (s *SecureStorageServer) Init(ctx context.Context) error {
 		return err
 	}
 
+	s.DB = new(postgres.Storage)
 	err = s.DB.Init(ctx, s.Config)
 	if err != nil {
 		return err
 	}
+	s.Minio = new(minio.Storage)
 	err = s.Minio.Init(ctx, s.Config)
 	if err != nil {
 		return err
@@ -279,8 +281,29 @@ func (s *SecureStorageServer) AuthUser(ctx context.Context, in *pb.AuthUserReque
 }
 
 func (s *SecureStorageServer) CheckService(ctx context.Context, _ *pb.CheckServiceRequest) (*pb.CheckServiceResponse, error) {
-	health := s.DB.Ping(ctx) || s.Minio.Ping(ctx) || s.Memory.Ping(ctx)
-	return &pb.CheckServiceResponse{Up: health}, nil
+	if s.ShutdownProcess {
+		return &pb.CheckServiceResponse{}, nil
+	}
+
+	userID := ctx.Value(cjwt.UserNum(`UserID`)).(string)
+	UID, err := strconv.Atoi(userID)
+	if err != nil {
+		s.Logger.Error().Stack().Err(err).Msg(errFailedConvert)
+		return &pb.CheckServiceResponse{}, errors.New(errUnexpected)
+	}
+
+	if UID < 1 {
+		s.Logger.Error().Stack().Err(err).Msg(errUnauthorizedUser)
+		return &pb.CheckServiceResponse{
+			Answer: pb.Answer_UnauthorizedUser,
+		}, nil
+	}
+
+	health := s.DB.Ping(ctx) && s.Minio.Ping(ctx)
+	return &pb.CheckServiceResponse{
+		Up:     health,
+		Answer: pb.Answer_Ok,
+	}, nil
 }
 
 func (s *SecureStorageServer) SaveUserCard(ctx context.Context, in *pb.SaveUserCardRequest) (*pb.SaveUserCardResponse, error) {
@@ -371,6 +394,7 @@ func (s *SecureStorageServer) GetUserCards(ctx context.Context, _ *pb.GetUserCar
 
 	cards := make([]*pb.Card, 0)
 
+	// get slice of encrypted cards
 	data, err := s.DB.GetUserData(ctx, UID, `card`)
 	if err != nil {
 		s.Logger.Error().Stack().Err(err).Msg(errFailedGetUserData)
@@ -727,6 +751,14 @@ func (s *SecureStorageServer) GetUserBinaryList(ctx context.Context, _ *pb.GetUs
 	objects, err := s.Minio.ListObjects(ctx, userID)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(objects) == 0 {
+		s.Logger.Warn().Stack().Msg(errNotFound)
+		return &pb.GetUserBinaryListResponse{
+			Answer: pb.Answer_NotFound,
+			Names:  nil,
+		}, nil
 	}
 
 	return &pb.GetUserBinaryListResponse{

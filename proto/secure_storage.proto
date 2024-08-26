@@ -21,6 +21,7 @@ enum Answer {
 message CheckServiceRequest {}
 message CheckServiceResponse{
   bool up = 1;
+  Answer answer = 2;
 }
 
 
