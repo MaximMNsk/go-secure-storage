@@ -718,7 +718,6 @@ func TestSecureStorageServer_GetUserPlains(t *testing.T) {
 func TestSecureStorageServer_SaveUserBinary(t *testing.T) {
 	type args struct {
 		ctx          context.Context
-		in           *pb.SaveUserCardRequest
 		sessKey      []byte
 		encMasterKey []byte
 	}
@@ -780,7 +779,6 @@ func TestSecureStorageServer_SaveUserBinary(t *testing.T) {
 func TestSecureStorageServer_GetUserBinaryList(t *testing.T) {
 	type args struct {
 		ctx          context.Context
-		in           *pb.GetUserBinaryListRequest
 		sessKey      []byte
 		encMasterKey []byte
 		list         []string
@@ -854,7 +852,6 @@ func TestSecureStorageServer_GetUserBinaryList(t *testing.T) {
 func TestSecureStorageServer_GetUserBinary(t *testing.T) {
 	type args struct {
 		ctx          context.Context
-		in           *pb.GetUserBinaryRequest
 		sessKey      []byte
 		encMasterKey []byte
 		encData      []byte
