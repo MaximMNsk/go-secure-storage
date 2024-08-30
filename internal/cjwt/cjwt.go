@@ -82,8 +82,9 @@ func JWTInterceptor(
 ) (interface{}, error) {
 	isRegisterUserMethod := strings.Contains(i.FullMethod, "RegisterUser")
 	isAuthUserMethod := strings.Contains(i.FullMethod, "AuthUser")
+	isCheckServiceMethod := strings.Contains(i.FullMethod, "CheckService")
 
-	if isRegisterUserMethod || isAuthUserMethod {
+	if isRegisterUserMethod || isAuthUserMethod || isCheckServiceMethod {
 		return handler(ctx, req)
 	}
 	md, ok := metadata.FromIncomingContext(ctx)

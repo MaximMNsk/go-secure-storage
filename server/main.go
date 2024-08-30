@@ -23,7 +23,6 @@ import (
 	"github.com/MaximMNsk/go-secure-storage/internal/rand"
 	pb "github.com/MaximMNsk/go-secure-storage/proto"
 	"github.com/MaximMNsk/go-secure-storage/server/config"
-	"github.com/MaximMNsk/go-secure-storage/server/storage/memory"
 	"github.com/MaximMNsk/go-secure-storage/server/storage/minio"
 	"github.com/MaximMNsk/go-secure-storage/server/storage/postgres"
 )
@@ -34,7 +33,6 @@ type SecureStorageServer struct {
 	GRPC               *grpc.Server
 	DB                 postgres.PGStorage
 	Minio              minio.MinioStorage
-	Memory             memory.Storage
 	Logger             zerolog.Logger
 	MasterUserID       int
 	EncryptedMasterKey []byte
@@ -66,6 +64,7 @@ const (
 	errFailedGetUserData      = "failed to get user data"
 	errFailedEncryptData      = "failed to encrypt data"
 	errNotFound               = "not found"
+	errIncorrectData          = "incorrect data"
 )
 
 func (s *SecureStorageServer) Init(ctx context.Context) error {
@@ -91,10 +90,6 @@ func (s *SecureStorageServer) Init(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	err = s.Memory.Init(ctx, s.Config)
-	if err != nil {
-		return err
-	}
 
 	serverCert, err := tls.LoadX509KeyPair(s.Config.Tlc.PublicPath, s.Config.Tlc.PrivatePath)
 	if err != nil {
@@ -102,7 +97,7 @@ func (s *SecureStorageServer) Init(ctx context.Context) error {
 	}
 	tlsCfg := &tls.Config{
 		Certificates: []tls.Certificate{serverCert},
-		ClientAuth:   tls.NoClientCert,
+		//ClientAuth:   tls.NoClientCert,
 	}
 	tlsCredentials := credentials.NewTLS(tlsCfg)
 
@@ -170,11 +165,6 @@ func (s *SecureStorageServer) Stop() error {
 		s.Logger.Error().Stack().Err(err).Msg(``)
 		return err
 	}
-	err = s.Memory.Destroy()
-	if err != nil {
-		s.Logger.Error().Stack().Err(err).Msg(``)
-		return err
-	}
 	s.GRPC.Stop()
 	return nil
 }
@@ -182,6 +172,13 @@ func (s *SecureStorageServer) Stop() error {
 func (s *SecureStorageServer) RegisterUser(ctx context.Context, in *pb.RegisterUserRequest) (*pb.RegisterUserResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.RegisterUserResponse{}, nil
+	}
+
+	if len(in.Login) == 0 || len(in.Password) == 0 || len(in.User.Name) == 0 || len(in.User.SecondName) == 0 {
+		s.Logger.Error().Stack().Msg(`user data is empty`)
+		return &pb.RegisterUserResponse{
+			Answer: pb.Answer_InconsistentData,
+		}, nil
 	}
 
 	pwdHash16, err := ccrypt.GetHash(in.GetPassword(), 16)
@@ -251,7 +248,7 @@ func (s *SecureStorageServer) AuthUser(ctx context.Context, in *pb.AuthUserReque
 	if err != nil {
 		s.Logger.Error().Stack().Err(err).Msg(errUserNotFound)
 		return &pb.AuthUserResponse{
-			Answer: pb.Answer_NotFound,
+			Answer: pb.Answer_UserNotFound,
 		}, nil
 	}
 
@@ -285,8 +282,13 @@ func (s *SecureStorageServer) CheckService(ctx context.Context, _ *pb.CheckServi
 		return &pb.CheckServiceResponse{}, nil
 	}
 
-	userID := ctx.Value(cjwt.UserNum(`UserID`)).(string)
-	UID, err := strconv.Atoi(userID)
+	userID := ctx.Value(cjwt.UserNum(`UserID`))
+	strUserID := `1`
+	if userID != nil {
+		strUserID = userID.(string)
+	}
+
+	UID, err := strconv.Atoi(strUserID)
 	if err != nil {
 		s.Logger.Error().Stack().Err(err).Msg(errFailedConvert)
 		return &pb.CheckServiceResponse{}, errors.New(errUnexpected)
@@ -309,6 +311,17 @@ func (s *SecureStorageServer) CheckService(ctx context.Context, _ *pb.CheckServi
 func (s *SecureStorageServer) SaveUserCard(ctx context.Context, in *pb.SaveUserCardRequest) (*pb.SaveUserCardResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.SaveUserCardResponse{}, nil
+	}
+
+	if len(in.GetCard().GetCardNumber()) == 0 ||
+		len(in.GetCard().GetCardholder()) == 0 ||
+		in.GetCard().GetCvv() == 0 ||
+		len(in.GetCard().GetExpired().GetMonth()) == 0 ||
+		len(in.GetCard().GetExpired().GetYear()) == 0 {
+		s.Logger.Error().Stack().Msg(in.GetCard().String())
+		return &pb.SaveUserCardResponse{
+			Answer: pb.Answer_InconsistentData,
+		}, nil
 	}
 
 	userID := ctx.Value(cjwt.UserNum(`UserID`)).(string)
@@ -436,6 +449,12 @@ func (s *SecureStorageServer) SaveUserCredentials(ctx context.Context, in *pb.Sa
 		return &pb.SaveUserCredentialsResponse{}, nil
 	}
 
+	if len(in.GetCredentials().GetLogin()) == 0 ||
+		len(in.GetCredentials().GetPassword()) == 0 {
+		s.Logger.Error().Stack().Msg(errIncorrectData)
+		return &pb.SaveUserCredentialsResponse{}, errors.New(errIncorrectData)
+	}
+
 	userID := ctx.Value(cjwt.UserNum(`UserID`)).(string)
 	UID, err := strconv.Atoi(userID)
 	if err != nil {
@@ -558,6 +577,11 @@ func (s *SecureStorageServer) SaveUserPlain(ctx context.Context, in *pb.SaveUser
 		return &pb.SaveUserPlainResponse{}, nil
 	}
 
+	if len(in.GetPlain().GetBodyText()) == 0 || len(in.GetPlain().GetTitle()) == 0 {
+		s.Logger.Error().Stack().Msg(errIncorrectData)
+		return &pb.SaveUserPlainResponse{}, errors.New(errIncorrectData)
+	}
+
 	userID := ctx.Value(cjwt.UserNum(`UserID`)).(string)
 	UID, err := strconv.Atoi(userID)
 	if err != nil {
@@ -678,6 +702,11 @@ func (s *SecureStorageServer) GetUserPlains(ctx context.Context, _ *pb.GetUserPl
 func (s *SecureStorageServer) SaveUserBinary(ctx context.Context, in *pb.SaveUserBinaryRequest) (*pb.SaveUserBinaryResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.SaveUserBinaryResponse{}, nil
+	}
+
+	if len(in.GetName()) == 0 {
+		s.Logger.Error().Stack().Msg(errIncorrectData)
+		return &pb.SaveUserBinaryResponse{}, errors.New(errIncorrectData)
 	}
 
 	userID := ctx.Value(cjwt.UserNum(`UserID`)).(string)

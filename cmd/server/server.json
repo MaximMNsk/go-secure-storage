@@ -9,8 +9,8 @@
     "use_ssl": false
   },
   "tlc": {
-    "private_path": "/media/maksim/KINGSTON/Projects/go-secure-storage/cmd/server/cert/privateKey.key",
-    "public_path": "/media/maksim/KINGSTON/Projects/go-secure-storage/cmd/server/cert/certificate.crt"
+    "private_path": "/media/maksim/KINGSTON/Projects/go-secure-storage/cmd/server/cert/server.key",
+    "public_path": "/media/maksim/KINGSTON/Projects/go-secure-storage/cmd/server/cert/server.crt"
   },
   "keys": {
     "default": {

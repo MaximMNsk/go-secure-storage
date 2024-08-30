@@ -14,6 +14,7 @@ enum Answer {
   IncorrectPwd = 3;
   UnauthorizedUser = 4;
   NotFound = 5;
+  InconsistentData = 6;
 }
 
 
