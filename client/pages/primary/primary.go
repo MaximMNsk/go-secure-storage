@@ -54,7 +54,6 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 
 type Menu struct {
 	list     list.Model
-	choice   string
 	quitting bool
 }
 
