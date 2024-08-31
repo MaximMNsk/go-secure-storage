@@ -24,8 +24,10 @@ type Model struct {
 	table table.Model
 }
 
+// Init - инициализация объекта TUI перед запуском.
 func (m Model) Init() tea.Cmd { return nil }
 
+// Update - обработка событий клавиатуры.
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
@@ -63,6 +65,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// View - определение отображения интерфейса пользователя.
 func (m Model) View() string {
 	return quitTextStyle.Render(Message) + "\n" + baseStyle.Render(m.table.View()) + "\n\n  " + m.table.HelpView() + "\n\n" + blurredStyle.Render("ctrl+home to back")
 }
@@ -75,6 +78,7 @@ var (
 	ListCards       map[string]*pb.Card
 )
 
+// Show - запуск интерфейса.
 func (m Model) Show(storage remote.Storage, routerCh chan messages.Message, token string) error {
 	RouterProxyChan = routerCh
 	ServerStorage = storage

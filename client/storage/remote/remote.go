@@ -32,11 +32,13 @@ type Storage interface {
 	AddFile(ctx context.Context, token, filePathName string) error
 }
 
+// Remote - основная структура для работы с удаленным сервером.
 type Remote struct {
 	client     pb.SecureStorageClient
 	remoteHost string
 }
 
+// Init - создание клиента.
 func (r *Remote) Init() error {
 	if flag.Lookup(`key1`) == nil {
 		flag.StringVar(&r.remoteHost, "h", "localhost:8000", "remote host address")
@@ -62,6 +64,7 @@ func (r *Remote) Init() error {
 	return nil
 }
 
+// Ping - проверка работоспособности сервера.
 func (r *Remote) Ping(ctx context.Context) bool {
 	service, err := r.client.CheckService(ctx, &pb.CheckServiceRequest{})
 	if err != nil {
@@ -76,6 +79,7 @@ func (r *Remote) Ping(ctx context.Context) bool {
 	return true
 }
 
+// RegisterUser - регистрация нового пользователя. Возвращает токен в случае успеха.
 func (r *Remote) RegisterUser(ctx context.Context, name, surname, login, password string) (string, error) {
 	req := &pb.RegisterUserRequest{
 		Login:    login,
@@ -100,6 +104,7 @@ func (r *Remote) RegisterUser(ctx context.Context, name, surname, login, passwor
 	return "", fmt.Errorf("invalid server response: %d", resp.GetAnswer())
 }
 
+// Login - авторизация нового пользователя. Возвращает токен в случае успеха.
 func (r *Remote) Login(ctx context.Context, login, password string) (string, error) {
 	req := &pb.AuthUserRequest{
 		Login:    login,
@@ -119,6 +124,7 @@ func (r *Remote) Login(ctx context.Context, login, password string) (string, err
 	return "", fmt.Errorf("invalid server response: %d", resp.GetAnswer())
 }
 
+// GetCards -получение объектов карт пользователя по токену.
 func (r *Remote) GetCards(ctx context.Context, token string) ([]*pb.Card, error) {
 	newCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 	resp, err := r.client.GetUserCards(newCtx, &pb.GetUserCardsRequest{})
@@ -136,6 +142,7 @@ func (r *Remote) GetCards(ctx context.Context, token string) ([]*pb.Card, error)
 	return nil, fmt.Errorf("invalid server response: %d", resp.GetAnswer())
 }
 
+// AddCard - сохранение карту пользователя.
 func (r *Remote) AddCard(ctx context.Context, cardNum, cardHolder string, cvv int, expMonth, expYear, token string) error {
 	newCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 	card := &pb.Card{
@@ -162,6 +169,7 @@ func (r *Remote) AddCard(ctx context.Context, cardNum, cardHolder string, cvv in
 	return fmt.Errorf("invalid server response: %d", resp.GetAnswer())
 }
 
+// GetCredentials - получение перечня секретных аутентификационных данных пользователя.
 func (r *Remote) GetCredentials(ctx context.Context, token string) ([]*pb.Credentials, error) {
 	newCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 	resp, err := r.client.GetUserCredentials(newCtx, &pb.GetUserCredentialsRequest{})
@@ -179,6 +187,7 @@ func (r *Remote) GetCredentials(ctx context.Context, token string) ([]*pb.Creden
 	return nil, fmt.Errorf("invalid server response: %d", resp.GetAnswer())
 }
 
+// AddCredentials - добавление секретных данных пользователя.
 func (r *Remote) AddCredentials(ctx context.Context, sourceName, login, pwd, token string) error {
 	newCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 	resp, err := r.client.SaveUserCredentials(newCtx, &pb.SaveUserCredentialsRequest{
@@ -202,6 +211,7 @@ func (r *Remote) AddCredentials(ctx context.Context, sourceName, login, pwd, tok
 	return fmt.Errorf("invalid server response: %d", resp.GetAnswer())
 }
 
+// GetPlains - получение перечня текстовых данных пользователя.
 func (r *Remote) GetPlains(ctx context.Context, token string) ([]*pb.Plain, error) {
 	newCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 	resp, err := r.client.GetUserPlains(newCtx, &pb.GetUserPlainsRequest{})
@@ -219,6 +229,7 @@ func (r *Remote) GetPlains(ctx context.Context, token string) ([]*pb.Plain, erro
 	return nil, fmt.Errorf("invalid server response: %d", resp.GetAnswer())
 }
 
+// AddPlain - добавление текстовых данных пользователя.
 func (r *Remote) AddPlain(ctx context.Context, title, body, token string) error {
 	newCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 	resp, err := r.client.SaveUserPlain(newCtx, &pb.SaveUserPlainRequest{
@@ -241,6 +252,7 @@ func (r *Remote) AddPlain(ctx context.Context, title, body, token string) error 
 	return fmt.Errorf("invalid server response: %d", resp.GetAnswer())
 }
 
+// GetFileList - получение списка файлов пользователя.
 func (r *Remote) GetFileList(ctx context.Context, token string) ([]string, error) {
 	newCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 	resp, err := r.client.GetUserBinaryList(newCtx, &pb.GetUserBinaryListRequest{})
@@ -258,6 +270,7 @@ func (r *Remote) GetFileList(ctx context.Context, token string) ([]string, error
 	return nil, fmt.Errorf("invalid server response: %d", resp.GetAnswer())
 }
 
+// DownloadFile - скачивание файла.
 func (r *Remote) DownloadFile(ctx context.Context, token, fileName string) error {
 	newCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 	resp, err := r.client.GetUserBinary(newCtx, &pb.GetUserBinaryRequest{
@@ -288,6 +301,7 @@ func (r *Remote) DownloadFile(ctx context.Context, token, fileName string) error
 	return nil
 }
 
+// AddFile - загрузка файла на сервер.
 func (r *Remote) AddFile(ctx context.Context, filePathName, token string) error {
 	newCtx := metadata.AppendToOutgoingContext(ctx, "authorization", "Bearer "+token)
 
@@ -312,7 +326,7 @@ func (r *Remote) AddFile(ctx context.Context, filePathName, token string) error 
 	if err != nil {
 		return err
 	}
-	defer file.Close() //nolint
+	defer file.Close() //nolint:all
 
 	data := make([]byte, fileStat.Size())
 	for {

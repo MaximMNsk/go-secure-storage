@@ -61,10 +61,12 @@ func initialModel() Model {
 	return m
 }
 
+// Init - инициализация объекта TUI перед запуском.
 func (m Model) Init() tea.Cmd {
 	return textinput.Blink
 }
 
+// Update - обработка событий клавиатуры.
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -173,6 +175,7 @@ func (m Model) updateInputs(msg tea.Msg) tea.Cmd {
 	return tea.Batch(cmds...)
 }
 
+// View - определение отображения интерфейса пользователя.
 func (m Model) View() string {
 	var b strings.Builder
 
@@ -212,6 +215,7 @@ var RouterProxyChan chan messages.Message
 var TokenProxyChan chan messages.Message
 var ServerStorage remote.Storage
 
+// Show - запуск интерфейса.
 func (m Model) Show(storage remote.Storage, routerCh chan messages.Message, tokenCh chan messages.Message) error {
 	RouterProxyChan = routerCh
 	TokenProxyChan = tokenCh

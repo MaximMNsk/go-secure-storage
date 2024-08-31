@@ -57,10 +57,12 @@ type Menu struct {
 	quitting bool
 }
 
+// Init - инициализация объекта TUI перед запуском.
 func (m *Menu) Init() tea.Cmd {
 	return nil
 }
 
+// Update - обработка событий клавиатуры.
 func (m *Menu) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -93,6 +95,7 @@ func (m *Menu) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// View - определение отображения интерфейса пользователя.
 func (m *Menu) View() string {
 	return quitTextStyle.Render(Message) + "\n" + m.list.View()
 }
@@ -106,6 +109,7 @@ const (
 var ProxyRouterChan chan messages.Message
 var Message string
 
+// Show - запуск интерфейса.
 func (m *Menu) Show(storage remote.Storage, routerCh chan messages.Message, mess string) error {
 	ProxyRouterChan = routerCh
 	Message = mess

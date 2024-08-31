@@ -76,10 +76,12 @@ func initialModel() Model {
 	}
 }
 
+// Init - инициализация объекта TUI перед запуском.
 func (m Model) Init() tea.Cmd { //nolint
 	return textinput.Blink
 }
 
+// Update - обработка событий клавиатуры.
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds = make([]tea.Cmd, len(m.inputs))
 
@@ -134,6 +136,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
+// View - определение отображения интерфейса пользователя.
 func (m Model) View() string {
 	return fmt.Sprintf(
 		` 
@@ -183,6 +186,7 @@ var (
 	Token           string
 )
 
+// Show - запуск интерфейса.
 func (m *Model) Show(storage remote.Storage, routerCh chan messages.Message, token string) error { //nolint
 	RouterProxyChan = routerCh
 	ServerStorage = storage

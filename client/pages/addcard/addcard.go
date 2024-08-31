@@ -99,7 +99,7 @@ func chnValidator(s string) error {
 	return nil
 }
 
-func initialModel() Model {
+func initialModel() *Model {
 	var inputs = make([]textinput.Model, 5)
 	inputs[ccn] = textinput.New()
 	inputs[ccn].Placeholder = "4505 **** **** 1234"
@@ -137,18 +137,20 @@ func initialModel() Model {
 	inputs[cvv].Prompt = ""
 	inputs[cvv].Validate = cvvValidator
 
-	return Model{
+	return &Model{
 		inputs:  inputs,
 		focused: 0,
 		err:     nil,
 	}
 }
 
-func (m Model) Init() tea.Cmd { //nolint
+// Init - инициализация объекта TUI перед запуском.
+func (m *Model) Init() tea.Cmd { //nolint
 	return textinput.Blink
 }
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+// Update - обработка событий клавиатуры.
+func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds = make([]tea.Cmd, len(m.inputs))
 
 	switch msg := msg.(type) {
@@ -210,7 +212,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m Model) View() string {
+// View - определение отображения интерфейса пользователя.
+func (m *Model) View() string {
 	return fmt.Sprintf(
 		` 
 
@@ -263,6 +266,7 @@ var (
 	Token           string
 )
 
+// Show - запуск интерфейса.
 func (m *Model) Show(storage remote.Storage, routerCh chan messages.Message, token string) error { //nolint
 	RouterProxyChan = routerCh
 	ServerStorage = storage

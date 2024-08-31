@@ -57,6 +57,7 @@ func main() {
 	wg.Wait()
 }
 
+// Client - основная структура клиента.
 type Client struct {
 	NeedLog      bool
 	Logger       zerolog.Logger
@@ -67,6 +68,7 @@ type Client struct {
 	RouteMessage string
 }
 
+// init - инициализация клиента с настройками.
 func (c *Client) init() error {
 	if flag.Lookup(`l`) == nil {
 		flag.BoolVar(&c.NeedLog, "l", false, "logfile will be create in the same directory as the client")
@@ -101,6 +103,7 @@ func (c *Client) init() error {
 	return nil
 }
 
+// routeObserver - роутинг запросов на определенные страницы.
 func (c *Client) routeObserver(wg *sync.WaitGroup) {
 	defer wg.Done()
 	for {
@@ -205,6 +208,8 @@ func (c *Client) routeObserver(wg *sync.WaitGroup) {
 		}
 	}
 }
+
+// tokenObserver - передача токена.
 func (c *Client) tokenObserver() {
 	for {
 		select { //nolint
