@@ -101,9 +101,13 @@ func (s *SecureStorageServer) Init(ctx context.Context) error {
 	}
 	tlsCredentials := credentials.NewTLS(tlsCfg)
 
+	//var opts []grpc.DialOption
+	//opts = append(opts, grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(100*1024*1024)))
+
 	s.GRPC = grpc.NewServer(
 		grpc.UnaryInterceptor(cjwt.JWTInterceptor),
 		grpc.Creds(tlsCredentials),
+		grpc.MaxRecvMsgSize(100*1024*1024),
 	)
 	return nil
 }

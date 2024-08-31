@@ -62,7 +62,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.Type {
+		switch msg.Type { //nolint
 		case tea.KeyCtrlHome, tea.KeyHome:
 			go func() {
 				RouterProxyChan <- new(messages.Message).GetPrimaryRoute()
@@ -123,7 +123,7 @@ func (m *Model) View() string {
  %s
  %s
 `,
-		inputStyle.Width(50).Render("File (5 MB max)"),
+		inputStyle.Width(50).Render("File (100 MB max)"),
 		m.inputs[flp].View(),
 		continueStyle.Render("Press Tab to switch next field"),
 		continueStyle.Render("Or press Ctrl+S to save..."),

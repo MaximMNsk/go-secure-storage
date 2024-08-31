@@ -50,6 +50,7 @@ func (r *Remote) Init() error {
 
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(creds))
+	opts = append(opts, grpc.WithDefaultCallOptions(grpc.MaxCallSendMsgSize(100*1024*1024)))
 
 	conn, err := grpc.NewClient(r.remoteHost, opts...)
 	if err != nil {
@@ -303,9 +304,9 @@ func (r *Remote) AddFile(ctx context.Context, filePathName, token string) error 
 		return err
 	}
 
-	if fileStat.Size() >= 5*1024*1024 {
-		return fmt.Errorf("file too large")
-	}
+	//if fileStat.Size() >= 5*1024*1024 {
+	//	return fmt.Errorf("file too large")
+	//}
 
 	file, err := os.Open(filePathName)
 	if err != nil {
