@@ -77,6 +77,7 @@ func (d *Storage) Ping(ctx context.Context) bool {
 	return err == nil
 }
 
+// prepare - подготовка БД, выполнение миграций
 func (d *Storage) prepare() error {
 	m, err := migrate.New(
 		`file://`+d.Config.DatabaseMigrations,

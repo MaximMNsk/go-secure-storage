@@ -18,6 +18,8 @@ type Storage struct {
 	Client *minio.Client
 }
 
+// MinioStorage - структура работы с хранилищем Минио.
+//
 //go:generate go run github.com/vektra/mockery/v2@v2.43.0 --name=MinioStorage
 type MinioStorage interface {
 	Init(_ context.Context, config config.Config) error
@@ -28,6 +30,7 @@ type MinioStorage interface {
 	ListObjects(ctx context.Context, userID string) ([]string, error)
 }
 
+// Init - насыщение структуры.
 func (m *Storage) Init(_ context.Context, config config.Config) error {
 	var err error
 	m.Client, err = minio.New(config.Minio.Endpoint, &minio.Options{
@@ -37,10 +40,12 @@ func (m *Storage) Init(_ context.Context, config config.Config) error {
 	return err
 }
 
+// Destroy - безопасный останов.
 func (m *Storage) Destroy() error {
 	return nil
 }
 
+// Ping - проверка работоспособности.
 func (m *Storage) Ping(_ context.Context) bool {
 	hc, err := m.Client.HealthCheck(1 * time.Second)
 	defer hc()
@@ -50,6 +55,7 @@ func (m *Storage) Ping(_ context.Context) bool {
 	return m.Client.IsOnline()
 }
 
+// PutObject - отправка объекта в хранилище.
 func (m *Storage) PutObject(ctx context.Context, userID, objectName string, object []byte) error {
 	bucketName := `bucket-` + userID
 	exists, err := m.Client.BucketExists(ctx, bucketName)
@@ -83,6 +89,7 @@ func (m *Storage) PutObject(ctx context.Context, userID, objectName string, obje
 	return nil
 }
 
+// GetObject - получение объекта из хранилища.
 func (m *Storage) GetObject(ctx context.Context, userID, name string) ([]byte, error) {
 	bucketName := `bucket-` + userID
 	objects, err := m.ListObjects(ctx, userID)
@@ -109,6 +116,7 @@ func (m *Storage) GetObject(ctx context.Context, userID, name string) ([]byte, e
 	return objectData, nil
 }
 
+// ListObjects - получение списка объектов в хранилище.
 func (m *Storage) ListObjects(ctx context.Context, userID string) ([]string, error) {
 	bucketName := `bucket-` + userID
 	opts := minio.ListObjectsOptions{

@@ -27,6 +27,7 @@ import (
 	"github.com/MaximMNsk/go-secure-storage/server/storage/postgres"
 )
 
+// SecureStorageServer - основная структура сервера.
 type SecureStorageServer struct {
 	pb.UnimplementedSecureStorageServer
 	Config             config.Config
@@ -67,6 +68,7 @@ const (
 	errIncorrectData          = "incorrect data"
 )
 
+// Init - насыщение параметрами основной структуры.
 func (s *SecureStorageServer) Init(ctx context.Context) error {
 	s.ShutdownProcess = false
 	s.ServerContext = ctx
@@ -112,6 +114,7 @@ func (s *SecureStorageServer) Init(ctx context.Context) error {
 	return nil
 }
 
+// Start - запуск.
 func (s *SecureStorageServer) Start() error {
 	var err error
 	s.MasterUserID, _, _, err = s.DB.GetUserByLogin(s.ServerContext, `MASTER`)
@@ -152,6 +155,7 @@ func (s *SecureStorageServer) Start() error {
 	return nil
 }
 
+// Stop - останов.
 func (s *SecureStorageServer) Stop() error {
 	s.ShutdownProcess = true
 	err := s.DB.DisableUserKeys(s.ServerContext, s.MasterUserID)
@@ -173,6 +177,7 @@ func (s *SecureStorageServer) Stop() error {
 	return nil
 }
 
+// RegisterUser - проверка и сохранение нового пользователя.
 func (s *SecureStorageServer) RegisterUser(ctx context.Context, in *pb.RegisterUserRequest) (*pb.RegisterUserResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.RegisterUserResponse{}, nil
@@ -243,6 +248,7 @@ func (s *SecureStorageServer) RegisterUser(ctx context.Context, in *pb.RegisterU
 	}, nil
 }
 
+// AuthUser - авторизация пользователя.
 func (s *SecureStorageServer) AuthUser(ctx context.Context, in *pb.AuthUserRequest) (*pb.AuthUserResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.AuthUserResponse{}, nil
@@ -281,6 +287,7 @@ func (s *SecureStorageServer) AuthUser(ctx context.Context, in *pb.AuthUserReque
 	}, nil
 }
 
+// CheckService - проверка работоспособности сервера и его компонентов.
 func (s *SecureStorageServer) CheckService(ctx context.Context, _ *pb.CheckServiceRequest) (*pb.CheckServiceResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.CheckServiceResponse{}, nil
@@ -312,6 +319,7 @@ func (s *SecureStorageServer) CheckService(ctx context.Context, _ *pb.CheckServi
 	}, nil
 }
 
+// SaveUserCard - сохранение карты пользователя.
 func (s *SecureStorageServer) SaveUserCard(ctx context.Context, in *pb.SaveUserCardRequest) (*pb.SaveUserCardResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.SaveUserCardResponse{}, nil
@@ -379,6 +387,7 @@ func (s *SecureStorageServer) SaveUserCard(ctx context.Context, in *pb.SaveUserC
 	}, nil
 }
 
+// GetUserCards - получение всех карт пользователя.
 func (s *SecureStorageServer) GetUserCards(ctx context.Context, _ *pb.GetUserCardsRequest) (*pb.GetUserCardsResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.GetUserCardsResponse{}, nil
@@ -448,6 +457,7 @@ func (s *SecureStorageServer) GetUserCards(ctx context.Context, _ *pb.GetUserCar
 	}, nil
 }
 
+// SaveUserCredentials - сохранение секретных данных пользователя.
 func (s *SecureStorageServer) SaveUserCredentials(ctx context.Context, in *pb.SaveUserCredentialsRequest) (*pb.SaveUserCredentialsResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.SaveUserCredentialsResponse{}, nil
@@ -509,6 +519,7 @@ func (s *SecureStorageServer) SaveUserCredentials(ctx context.Context, in *pb.Sa
 	}, nil
 }
 
+// GetUserCredentials - выдача секретных данных пользователя.
 func (s *SecureStorageServer) GetUserCredentials(ctx context.Context, _ *pb.GetUserCredentialsRequest) (*pb.GetUserCredentialsResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.GetUserCredentialsResponse{}, nil
@@ -576,6 +587,7 @@ func (s *SecureStorageServer) GetUserCredentials(ctx context.Context, _ *pb.GetU
 	}, nil
 }
 
+// SaveUserPlain - сохранение текстовых данных пользователя.
 func (s *SecureStorageServer) SaveUserPlain(ctx context.Context, in *pb.SaveUserPlainRequest) (*pb.SaveUserPlainResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.SaveUserPlainResponse{}, nil
@@ -636,6 +648,7 @@ func (s *SecureStorageServer) SaveUserPlain(ctx context.Context, in *pb.SaveUser
 	}, nil
 }
 
+// GetUserPlains - получение текстовых данные пользователя.
 func (s *SecureStorageServer) GetUserPlains(ctx context.Context, _ *pb.GetUserPlainsRequest) (*pb.GetUserPlainResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.GetUserPlainResponse{}, nil
@@ -703,6 +716,7 @@ func (s *SecureStorageServer) GetUserPlains(ctx context.Context, _ *pb.GetUserPl
 	}, nil
 }
 
+// SaveUserBinary - сохранение файла пользователя.
 func (s *SecureStorageServer) SaveUserBinary(ctx context.Context, in *pb.SaveUserBinaryRequest) (*pb.SaveUserBinaryResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.SaveUserBinaryResponse{}, nil
@@ -762,6 +776,7 @@ func (s *SecureStorageServer) SaveUserBinary(ctx context.Context, in *pb.SaveUse
 	}, nil
 }
 
+// GetUserBinaryList - получение списка файлов пользователя.
 func (s *SecureStorageServer) GetUserBinaryList(ctx context.Context, _ *pb.GetUserBinaryListRequest) (*pb.GetUserBinaryListResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.GetUserBinaryListResponse{}, nil
@@ -800,6 +815,7 @@ func (s *SecureStorageServer) GetUserBinaryList(ctx context.Context, _ *pb.GetUs
 	}, nil
 }
 
+// GetUserBinary - получение файла пользователя.
 func (s *SecureStorageServer) GetUserBinary(ctx context.Context, in *pb.GetUserBinaryRequest) (*pb.GetUserBinaryResponse, error) {
 	if s.ShutdownProcess {
 		return &pb.GetUserBinaryResponse{}, nil

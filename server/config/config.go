@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// Config - основная структура конфигурации.
 type Config struct {
 	AppAddr                  string `json:"app_addr"`
 	DatabaseConnectionString string `json:"db_connection_string"`
@@ -33,6 +34,7 @@ type Config struct {
 	}
 }
 
+// Init - заполнение структуры конфигурации.
 func (c *Config) Init() error {
 	if flag.Lookup(`c`) == nil {
 		if len(c.ConfigFile) == 0 {
