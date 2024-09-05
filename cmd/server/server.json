@@ -1,7 +1,7 @@
 {
   "app_addr": "localhost:8000",
-  "db_connection_string": "postgresql://postgres@127.0.0.1:5432/postgres?sslmode=disable",
-  "db_migrations": "/media/maksim/KINGSTON/Projects/go-secure-storage/server/storage/postgres/migrations",
+  "db_connection_string": "postgresql://postgres:12345@127.0.0.1:5432/postgres?sslmode=disable",
+  "db_migrations": "/media/medyantsev/KINGSTON/Projects/go-secure-storage/server/storage/postgres/migrations",
   "minio":{
     "endpoint": "127.0.0.1:9000",
     "access_key": "8tHF84ptAOyupERabqyl",
@@ -9,8 +9,8 @@
     "use_ssl": false
   },
   "tlc": {
-    "private_path": "/media/maksim/KINGSTON/Projects/go-secure-storage/cmd/server/cert/server.key",
-    "public_path": "/media/maksim/KINGSTON/Projects/go-secure-storage/cmd/server/cert/server.crt"
+    "private_path": "/media/medyantsev/KINGSTON/Projects/go-secure-storage/cmd/server/cert/server.key",
+    "public_path": "/media/medyantsev/KINGSTON/Projects/go-secure-storage/cmd/server/cert/server.crt"
   },
   "keys": {
     "default": {
