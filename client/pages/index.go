@@ -49,7 +49,10 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 		}
 	}
 
-	fmt.Fprint(w, fn(str))
+	_, err := fmt.Fprint(w, fn(str))
+	if err != nil {
+		return
+	}
 }
 
 type Menu struct {

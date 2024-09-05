@@ -1,6 +1,8 @@
 package messages
 
-import "strings"
+import (
+	"strings"
+)
 
 const (
 	Route = `route`
@@ -122,6 +124,9 @@ func (m *Message) GetAddFileRoute() Message {
 }
 
 func PrepareRoute(text string) string {
+	if len(text) == 0 {
+		return ``
+	}
 	words := strings.Split(text, " ")
 	for i, word := range words {
 		words[i] = strings.ToUpper(word[:1]) + strings.ToLower(word[1:])
