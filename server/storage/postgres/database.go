@@ -3,12 +3,12 @@ package postgres
 import (
 	"context"
 	"errors"
+	"github.com/jackc/pgerrcode"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -156,7 +156,7 @@ func (d *Storage) GetUserByLogin(ctx context.Context, login string) (int, string
 	query := d.Pool.QueryRow(ctx, getUserByLoginSql, login)
 	err := query.Scan(&id, &credentials, &pwdHash)
 	if err != nil {
-		return 0, "", "", err
+		return 0, "", "", errors.New(`user not found`)
 	}
 	return id, credentials, pwdHash, nil
 }

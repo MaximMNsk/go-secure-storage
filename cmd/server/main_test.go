@@ -13,6 +13,8 @@ import (
 	pgmock "github.com/MaximMNsk/go-secure-storage/server/storage/postgres/mocks"
 )
 
+var Cfg = `server.json`
+
 func TestSecureStorageServer_RegisterUser(t *testing.T) {
 	type saver struct {
 		uid       int
@@ -79,7 +81,7 @@ func TestSecureStorageServer_RegisterUser(t *testing.T) {
 			dbMock := pgmock.NewPGStorage(t)
 
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -174,7 +176,7 @@ func TestSecureStorageServer_AuthUser(t *testing.T) {
 			dbMock := pgmock.NewPGStorage(t)
 
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -242,7 +244,7 @@ func TestSecureStorageServer_CheckService(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -302,7 +304,7 @@ func TestSecureStorageServer_SaveUserCard(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -392,7 +394,7 @@ func TestSecureStorageServer_GetUserCards(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -455,7 +457,7 @@ func TestSecureStorageServer_SaveUserCredentials(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -540,7 +542,7 @@ func TestSecureStorageServer_GetUserCredentials(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -603,7 +605,7 @@ func TestSecureStorageServer_SaveUserPlain(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -688,7 +690,7 @@ func TestSecureStorageServer_GetUserPlains(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -751,7 +753,7 @@ func TestSecureStorageServer_SaveUserBinary(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -831,7 +833,7 @@ func TestSecureStorageServer_GetUserBinaryList(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
@@ -888,7 +890,7 @@ func TestSecureStorageServer_GetUserBinary(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := new(SecureStorageServer)
-			s.Config.ConfigFile = `../cmd/server/server.json`
+			s.Config.ConfigFile = Cfg
 			err := s.Config.Init()
 			require.NoError(t, err)
 
